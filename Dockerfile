@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
-ARG SOPS_VERSION="v3.7.3"
-ARG AGE_VERSION="v1.1.1"
+ARG VALS_VERSION="0.24.0"
 ARG HELM_VERSION="v3.11.1"
 ARG HELM_SECRETS_VERSION="4.4.2"
 ARG HELMFILE_VERSION="0.152.0" 
@@ -23,12 +22,10 @@ RUN apt-get update  --allow-insecure-repositories --allow-unauthenticated && \
 COPY helm-wrapper.sh /usr/local/bin/helm
 RUN OS=$(uname | tr '[:upper:]' '[:lower:]') && \
     ARCH=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') && \
-    curl -o /usr/local/bin/sops -L https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.${OS}.${ARCH} && \
-    chmod +x /usr/local/bin/sops && \
-    curl -sSL -o age.tar.gz https://github.com/FiloSottile/age/releases/download/${AGE_VERSION}/age-${AGE_VERSION}-${OS}-${ARCH}.tar.gz && \
-    tar zxvf age.tar.gz && \
-    mv age/age* /usr/local/bin/ && \
-    rm -rf age age.tar.gz && \
+    curl -sSL -o vals.tar.gz https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_0.24.0_${OS}_${ARCH}.tar.gz && \
+    tar zxvf vals.tar.gz && \
+    mv vals /usr/local/bin/ && \
+    rm -f vals vals.tar.gz && \
     curl -fsSLO https://get.helm.sh/helm-${HELM_VERSION}-${OS}-${ARCH}.tar.gz && \
     tar zxvf "helm-${HELM_VERSION}-${OS}-${ARCH}.tar.gz" && \
     mv ${OS}-${ARCH}/helm /usr/local/bin/helm.bin && \
